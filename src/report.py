@@ -9,6 +9,7 @@ import csv
 import io
 import json
 import platform
+from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -34,9 +35,17 @@ BUNDLE_REQUIRED_FILES = [
 
 
 def _numpy_config_text() -> str:
-    buf = io.StringIO()
-    np.__config__.show(buf)
-    return buf.getvalue()
+    try:
+        cfg = np.__config__.show(mode="dicts")
+        return json.dumps(cfg, sort_keys=True)
+    except Exception:
+        try:
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                np.__config__.show()
+            return buf.getvalue()
+        except Exception as exc:
+            return f"numpy_config_unavailable: {exc}"
 
 
 def _plot_plateau(path: Path, param: str, derivative_by_h: list[dict], chosen_h: float) -> None:
