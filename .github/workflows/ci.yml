@@ -32,6 +32,9 @@ jobs:
             min_survivors: 10
             ulam_M: 12
             ulam_r: 2
+            r2_threshold: 0.90
+            min_window_len: 10
+            fallback_policy: best_available
           jacobian:
             Z0_seed: 123
             Z0_size: 80

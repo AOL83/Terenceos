@@ -23,6 +23,9 @@ class BehavioralConfig:
     min_survivors: int
     ulam_M: int
     ulam_r: int
+    r2_threshold: float = 0.98
+    min_window_len: int = 25
+    fallback_policy: str = "strict_fail"
 
 
 def behavioral_map(
@@ -32,7 +35,15 @@ def behavioral_map(
     seed: int,
 ) -> dict:
     lyap = lyapunov_conditioned_split(system, Z0, cfg.T_lyap, cfg.burn_lyap, seed)
-    esc = estimate_escape_rate(system, Z0, cfg.T_escape, cfg.min_survivors)
+    esc = estimate_escape_rate(
+        system,
+        Z0,
+        cfg.T_escape,
+        cfg.min_survivors,
+        r2_threshold=cfg.r2_threshold,
+        min_window_len=cfg.min_window_len,
+        fallback_policy=cfg.fallback_policy,
+    )
     P = build_ulam_matrix(system, cfg.ulam_M, cfg.ulam_r)
     ulam_spec = compute_ulam_spectrum(P)
     lam2 = complex(ulam_spec["lambda2"][0], ulam_spec["lambda2"][1])
