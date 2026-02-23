@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tiny smoke pilot
+        run: |
+          cat > /tmp/tiny_pilot.yaml <<'EOF'
+          base_parameters:
+            theta: 0.1
+            mu: 0.2
+            kappa: 0.08
+            a: 0.3
+          behavioral:
+            T_lyap: 40
+            burn_lyap: 5
+            T_escape: 45
+            min_survivors: 10
+            ulam_M: 12
+            ulam_r: 2
+            r2_threshold: 0.90
+            min_window_len: 10
+            fallback_policy: best_available
+          jacobian:
+            Z0_seed: 123
+            Z0_size: 80
+            h_values: [0.02, 0.01]
+            seeds: [1, 2]
+            plateau_tol: 0.5
+            epsilon: 1.0e-10
+          grid_refinement:
+            M_list: [8, 10]
+          output_base: results/
+          EOF
+          timeout 60s python -m src.run_pilot --config /tmp/tiny_pilot.yaml > /tmp/bundle_path.txt
+          BUNDLE_PATH=$(tail -n 1 /tmp/bundle_path.txt)
+          test -d "$BUNDLE_PATH"
+          for f in \
+            meta.json doctrine.txt jacobian_summary.json plateau_info.json \
+            ulam_logs.json escape_logs.json tables/grid_refinement.csv \
+            plots/plateau_theta.png plots/plateau_kappa.png plots/plateau_mu.png plots/survival_fit.png; do
+            test -f "$BUNDLE_PATH/$f"
+          done
