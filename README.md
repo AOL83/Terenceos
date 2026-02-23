@@ -1,3 +1,4 @@
+<img width="1536" height="1024" alt="ChatGPT Image Feb 23, 2026, 05_51_57 PM" src="https://github.com/user-attachments/assets/0aad92f2-b0f0-40ed-a1ed-4e8d2404f58f" />
 # TerenceOS
 
 **Repository name:** TerenceOS  
