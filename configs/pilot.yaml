@@ -1,0 +1,26 @@
+base_parameters:
+  theta: 0.12
+  mu: 0.2
+  kappa: 0.08
+  a: 0.35
+
+behavioral:
+  T_lyap: 140
+  burn_lyap: 20
+  T_escape: 180
+  min_survivors: 40
+  ulam_M: 40
+  ulam_r: 4
+
+jacobian:
+  Z0_seed: 202409
+  Z0_size: 400
+  h_values: [0.02, 0.01, 0.005]
+  seeds: [11, 29, 47]
+  plateau_tol: 0.2
+  epsilon: 1.0e-10
+
+grid_refinement:
+  M_list: [40, 60, 80]
+
+output_base: results/
